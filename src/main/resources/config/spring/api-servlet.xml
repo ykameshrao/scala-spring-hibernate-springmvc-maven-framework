@@ -1,0 +1,97 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		   http://www.springframework.org/schema/mvc
+		   http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+    <import resource="applicationContext-akka.xml"/>
+    <import resource="applicationContext-scheduler.xml"/>
+    <import resource="applicationContext-service.xml"/>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <!-- Request xml and json marshalling / unmarshalling config -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <!-- Request xml and json marshalling / unmarshalling config -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <bean id="jaxbXmlMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>com.kaleidosoftlabs.hsm.api.request.UserRequest</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="jsonMarshaller" class="org.codehaus.jackson.map.ObjectMapper"/>
+
+    <bean id="inboundMessageAdapter"
+          class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+                    <property name="marshaller" ref="jaxbXmlMarshaller"/>
+                    <property name="unmarshaller" ref="jaxbXmlMarshaller"/>
+                </bean>
+                <bean id="marshallingJsonHttpMessageConverter"
+                      class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+                    <property name="objectMapper" ref="jsonMarshaller"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Configuring the API response views -->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="1"/>
+        <property name="mediaTypes">
+            <map>
+                <entry key="xml" value="application/xml"/>
+                <entry key="json" value="application/json"/>
+            </map>
+        </property>
+        <property name="defaultViews">
+            <list>
+                <!-- Json View -->
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+                    <property name="modelKey" value="response"/>
+                </bean>
+
+                <!-- XStream XML View -->
+                <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+                    <property name="modelKey" value="response"/>
+                    <constructor-arg>
+                        <bean id="xstreamMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+                            <property name="autodetectAnnotations" value="true"/>
+                            <property name="annotatedClasses">
+                                <list>
+                                    <value>com.kaleidosoftlabs.framework.response.Response</value>
+                                    <value>com.kaleidosoftlabs.hsm.model.entity.User</value>
+                                </list>
+                            </property>
+                        </bean>
+                    </constructor-arg>
+                </bean>
+            </list>
+        </property>
+        <property name="defaultContentType" value="application/xml"/>
+        <property name="favorPathExtension" value="true"/>
+    </bean>
+
+    <!-- Add controller package to be scanned for this path -->
+    <context:component-scan base-package="com.kaleidosoftlabs.hsm.api.controller"/>
+
+    <mvc:annotation-driven/>
+
+    <tx:annotation-driven/>
+</beans>

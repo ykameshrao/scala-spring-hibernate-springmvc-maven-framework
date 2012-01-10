@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:akka="http://akka.io/schema/akka"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://akka.io/schema/akka
+                           http://akka.io/akka-1.2.xsd">
+    <akka:untyped-actor id="testActor"
+                        implementation="com.kaleidosoftlabs.hsm.system.actor.TestActor"
+                        timeout="1000"
+                        scope="singleton"
+                        autostart="true">
+    </akka:untyped-actor>
+
+    <akka:typed-actor id="testTypedActor"
+                      interface="com.kaleidosoftlabs.hsm.system.actor.TestTypedActor"
+                      implementation="com.kaleidosoftlabs.hsm.system.actor.TestTypedActorImpl"
+                      timeout="1000"
+                      scope="singleton">
+    </akka:typed-actor>
+</beans>

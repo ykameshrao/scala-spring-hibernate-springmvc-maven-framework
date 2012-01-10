@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		                     http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+
+    <display-name>Chabootra v1.0</display-name>
+
+    <!-- Spring Framework Configuration -->
+    <!-- Mentioning the Context Loader Listener class of Spring Framework as a listener -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:config/spring/applicationContext-properties.xml,
+            classpath:config/spring/applicationContext-aop.xml,
+            classpath:config/spring/applicationContext-jdbc.xml,
+            classpath:config/spring/applicationContext-dao.xml,
+            classpath:config/spring/applicationContext-service.xml,
+            classpath:config/spring/applicationContext-auth.xml,
+            classpath:config/spring/applicationContext-scheduler.xml,
+            classpath:config/spring/applicationContext-akka.xml
+        </param-value>
+    </context-param>
+
+
+    <!-- Servlet Configurations -->
+    <!-- API Dispatcher -->
+    <servlet>
+        <servlet-name>hsmApiDispatcher</servlet-name>
+        <servlet-class>com.kaleidosoftlabs.hsm.api.dispatcher.HsmApiDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:config/spring/api-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>hsmApiDispatcher</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- Flex Dispatcher -->
+    <servlet>
+        <servlet-name>hsmFlexDispatcher</servlet-name>
+        <servlet-class>com.kaleidosoftlabs.hsm.flex.dispatcher.HsmFlexDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:config/spring/flex-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>hsmFlexDispatcher</servlet-name>
+        <url-pattern>/flex/*</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- Filter Configurations -->
+    <!-- UTF-8 encoding filter -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>
+            org.springframework.web.filter.CharacterEncodingFilter
+        </filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- User Auth filter -->
+    <filter>
+        <filter-name>userAuthFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>userAuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- Spring Hibernate session filter-->
+    <filter>
+        <filter-name>hibernateFilter</filter-name>
+        <filter-class>
+            org.springframework.orm.hibernate3.support.OpenSessionInViewFilter
+        </filter-class>
+        <init-param>
+            <param-name>singleSession</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>hibernateFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- Log4J configuration -->
+    <!-- Location of the Log4J config file, for init and refresh checks. Applied by Log4jConfigListener. -->
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>classpath:config/props/log4j.properties</param-value>
+    </context-param>
+
+    <!-- Configures Log4J for this web app -->
+    <!-- Leave the listener commented-out if using JBoss -->
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+
+
+    <!-- Welcome file -->
+    <welcome-file-list>
+        <welcome-file>/jsp/index.jsp</welcome-file>
+    </welcome-file-list>
+
+
+    <!-- Error Handling -->
+    <!-- Mapping a lot of errors to Bad Request -->
+    <error-page>
+        <error-code>400</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>402</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>406</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>407</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>409</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>410</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>411</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+    <error-page>
+        <error-code>412</error-code>
+        <location>/api/errors/400</location>
+    </error-page>
+
+
+    <!-- Other properly handled errors -->
+    <error-page>
+        <error-code>401</error-code>
+        <location>/api/errors/401</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/api/errors/404</location>
+    </error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/api/errors/405</location>
+    </error-page>
+    <error-page>
+        <error-code>408</error-code>
+        <location>/api/errors/408</location>
+    </error-page>
+    <error-page>
+        <error-code>415</error-code>
+        <location>/api/errors/415</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/api/errors/500</location>
+    </error-page>
+    <error-page>
+        <error-code>501</error-code>
+        <location>/api/errors/501</location>
+    </error-page>
+    <error-page>
+        <error-code>503</error-code>
+        <location>/api/errors/503</location>
+    </error-page>
+
+</web-app>
