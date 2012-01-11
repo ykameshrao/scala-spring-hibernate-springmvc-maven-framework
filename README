@@ -1,0 +1,15 @@
+This is the wrapper framework laid out to start building Spring based Web apps with Hibernate ORM layer and Spring MVC
+in scala programming language. The purpose of this project is to get you started quickly in Scala web app development 
+over a tried and tested java framework: Spring.
+
+This project provides sample hibernate entities, models, DAOs, Service and Controller classes. There are also
+many framework level classes to help handle exceptions and errors in the project you may start developing using this.
+
+
+Used components:
+Spring 3+
+Hibernate 3+
+Scala 2.9+
+Maven
+
+
